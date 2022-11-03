@@ -151,15 +151,14 @@ const RemainingIntentHandler = {
 
 // ********************************* BUILT-IN ****************************
 
-
 const HelpIntentHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent';
     },
     handle(handlerInput) {
-        const speakOutput = 'You can say hello to me! How can I help?';
-
+         // const speakOutput = 'You can say hello to me! How can I help?';
+        const speakOutput = helpText;
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
@@ -174,8 +173,8 @@ const CancelAndStopIntentHandler = {
                 || Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent');
     },
     handle(handlerInput) {
-        const speakOutput = 'Goodbye!';
-
+        // const speakOutput = 'Goodbye!';
+        const speakOutput = doneText;
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .getResponse();
@@ -192,8 +191,8 @@ const FallbackIntentHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.FallbackIntent';
     },
     handle(handlerInput) {
-        const speakOutput = 'Sorry, I don\'t know about that. Please try again.';
-
+             // const speakOutput = 'Sorry, I don\'t know about that. Please try again.';
+        const speakOutput = helpText;
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
@@ -244,7 +243,8 @@ const ErrorHandler = {
         return true;
     },
     handle(handlerInput, error) {
-        const speakOutput = 'Sorry, I had trouble doing what you asked. Please try again.';
+        // const speakOutput = `Sorry, I had trouble doing what you asked. Please try again.`;
+        const speakOutput = errorText;
         console.log(`~~~~ Error handled: ${JSON.stringify(error)}`);
 
         return handlerInput.responseBuilder
@@ -262,13 +262,17 @@ const ErrorHandler = {
 exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
-        HelloWorldIntentHandler,
+        NextIntentHandler,  //  add custom intents and remove any unnecessary ones (e.g. hello world)
+        RemainingIntentHandler, //  add custom intents and remove any unnecessary ones (e.g. hello world)
+        // HelloWorldIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         FallbackIntentHandler,
         SessionEndedRequestHandler,
         IntentReflectorHandler)
     .addErrorHandlers(
-        ErrorHandler)
-    .withCustomUserAgent('sample/hello-world/v1.2')
+        ErrorHandler,
+    )
     .lambda();
+    
+    
