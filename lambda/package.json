@@ -1,7 +1,7 @@
 {
-  "name": "hello-world",
-  "version": "1.2.0",
-  "description": "alexa utility for quickly building skills",
+  "name": "TT-BB",
+  "version": "1.0.0",
+  "description": "Alexa utility for Timberwolf Tracker - Boys Basketball",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
