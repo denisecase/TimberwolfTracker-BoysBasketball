@@ -1,0 +1,12 @@
+{
+    "skillName": "Timberwolf Tracker - Boys Basketball",
+    "gender": "Boys",
+    "sport": "Basketball",
+    "homecity": "Ely High School",
+    "intentText1": "when is the next game",
+    "intentText2": "how many games remaining",
+    "helpText": "Say when is the next game or how many games remaining? Say stop or cancel to exit.",
+    "doneText": "Go Timberwolves - Goodbye!",
+    "errorText": "Sorry, I could not understand. Please try again.",
+    "victoryText": " "
+}
