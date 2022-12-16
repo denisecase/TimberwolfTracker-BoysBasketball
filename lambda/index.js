@@ -1,4 +1,4 @@
-/* *
+/* * MODIFIED FROM BEARCAT BUDDY***************************************
  * This sample demonstrates handling intents from an Alexa skill using the Alexa Skills Kit SDK (v2).
  * Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
  * session persistence, api calls, and more.
@@ -10,6 +10,9 @@ const games = require('./games');
 
 // import custom config.json information
 const config = require('./config');
+
+// import multimodal information for screens
+let mm = require('./multimodal.json')
 
 // set up local variables
 const home = "home"
@@ -24,6 +27,19 @@ const helpText = config.helpText
 const doneText = config.doneText;
 const errorText = config.errorText;
 const victoryText = config.victoryText;
+
+// helper function - prepare display
+const createDirectivePayload = (aplDocumentId, dataSources = {}, tokenId = "documentToken") => {
+    return {
+        type: "Alexa.Presentation.APL.RenderDocument",
+        token: tokenId,
+        document: {
+            type: "Link",
+            src: "doc://alexa/apl/documents/" + aplDocumentId
+        },
+        datasources: dataSources
+    }
+};
 
 // helper function - get next 
 function getNext(now, location) {
@@ -93,6 +109,14 @@ const LaunchRequestHandler = {
     },
     handle(handlerInput) {
         const speakOutput = `Welcome from ${skillName}. Say ${intentText1} or ${intentText2}`;
+        const speakOutputScreen = `Say ${intentText1} or ${intentText2}`;
+        if (Alexa.getSupportedInterfaces(handlerInput.requestEnvelope)['Alexa.Presentation.APL']) {
+            mm.datasources.headlineTemplateData.properties.textContent.headerTitle.text = "";
+            mm.datasources.headlineTemplateData.properties.textContent.headerSubtitle.text = "";          
+            mm.datasources.headlineTemplateData.properties.hintText = speakOutputScreen
+            const aplDirective = mm;
+            handlerInput.responseBuilder.addDirective(aplDirective);
+        }
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
@@ -108,6 +132,7 @@ const NextIntentHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'NextIntent';
     },
     handle(handlerInput) {
+        const repromptText = 'Ask how many games remaining or say stop or cancel to exit.'
         const s = handlerInput.requestEnvelope.request.intent.slots;
         const location = (s.Location) ? s.Location.value : null;
         console.log('next location = ' + location);
@@ -118,9 +143,16 @@ const NextIntentHandler = {
         if (speechText === '') { 
             speechText = `Hmm...I can't help with that one. Try asking ${intentText1} or ${intentText2}`;
         }
+        if (Alexa.getSupportedInterfaces(handlerInput.requestEnvelope)['Alexa.Presentation.APL']) {
+            mm.datasources.headlineTemplateData.properties.textContent.headerTitle.text = "";
+            mm.datasources.headlineTemplateData.properties.textContent.headerSubtitle.text = speechText;
+            mm.datasources.headlineTemplateData.properties.hintText = repromptText;
+            const aplDirective = mm;
+            handlerInput.responseBuilder.addDirective(aplDirective);
+        }
         return handlerInput.responseBuilder
             .speak(speechText)
-            .reprompt('Ask how many games remaining or say stop or cancel to exit.')
+            .reprompt(repromptText)
             .getResponse();
     }
 };
@@ -133,6 +165,7 @@ const RemainingIntentHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'RemainingIntent';
     },
      handle(handlerInput) {
+        const repromptText = 'Ask when is the next game or say stop or cancel to exit.'
         const s = handlerInput.requestEnvelope.request.intent.slots;
         const location = (s.Location.value) ? s.Location.value : null;
         console.log('remaining location = ' + location);
@@ -143,9 +176,16 @@ const RemainingIntentHandler = {
          if (speechText === '') { 
             speechText = `Hmm...I can't help with that one. Try asking ${intentText1} or ${intentText2}`;
         }
+        if (Alexa.getSupportedInterfaces(handlerInput.requestEnvelope)['Alexa.Presentation.APL']) {
+            mm.datasources.headlineTemplateData.properties.textContent.headerTitle.text = "";
+            mm.datasources.headlineTemplateData.properties.textContent.headerSubtitle.text = speechText;
+            mm.datasources.headlineTemplateData.properties.hintText = repromptText;
+            const aplDirective = mm;
+            handlerInput.responseBuilder.addDirective(aplDirective);
+        }
         return handlerInput.responseBuilder
             .speak(speechText)
-            .reprompt('Ask when is the next game or say stop or cancel to exit.')
+            .reprompt(repromptText)
             .getResponse();
     }
 };
@@ -158,8 +198,15 @@ const HelpIntentHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent';
     },
     handle(handlerInput) {
-         // const speakOutput = 'You can say hello to me! How can I help?';
+        // const speakOutput = 'You can say hello to me! How can I help?';
         const speakOutput = helpText;
+        if (Alexa.getSupportedInterfaces(handlerInput.requestEnvelope)['Alexa.Presentation.APL']) {
+            mm.datasources.headlineTemplateData.properties.textContent.headerTitle.text = "";
+            mm.datasources.headlineTemplateData.properties.textContent.headerSubtitle.text = "";
+            mm.datasources.headlineTemplateData.properties.hintText = helpText
+            const aplDirective = mm;
+            handlerInput.responseBuilder.addDirective(aplDirective);
+        }
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
@@ -176,13 +223,21 @@ const CancelAndStopIntentHandler = {
     handle(handlerInput) {
         // const speakOutput = 'Goodbye!';
         const speakOutput = doneText;
+        if (Alexa.getSupportedInterfaces(handlerInput.requestEnvelope)['Alexa.Presentation.APL']) {
+            mm.datasources.headlineTemplateData.properties.textContent.headerTitle.text = "";
+            mm.datasources.headlineTemplateData.properties.textContent.headerSubtitle.text = "";
+            mm.datasources.headlineTemplateData.properties.hintText = doneText
+            const aplDirective = mm;
+            handlerInput.responseBuilder.addDirective(aplDirective);
+        }
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .getResponse();
     }
 };
+
 /* *
- * FallbackIntent triggers when a customer says something that doesn’t map to any intents in your skill
+ * FallbackIntent triggers when a customer says something that doesnâ€™t map to any intents in your skill
  * It must also be defined in the language model (if the locale supports it)
  * This handler can be safely added but will be ingnored in locales that do not support it yet 
  * */
@@ -192,14 +247,22 @@ const FallbackIntentHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.FallbackIntent';
     },
     handle(handlerInput) {
-             // const speakOutput = 'Sorry, I don\'t know about that. Please try again.';
+        // const speakOutput = 'Sorry, I don\'t know about that. Please try again.';
         const speakOutput = helpText;
+        if (Alexa.getSupportedInterfaces(handlerInput.requestEnvelope)['Alexa.Presentation.APL']) {
+            mm.datasources.headlineTemplateData.properties.textContent.headerTitle.text = "";
+            mm.datasources.headlineTemplateData.properties.textContent.headerSubtitle.text = "";
+            mm.datasources.headlineTemplateData.properties.hintText = helpText
+            const aplDirective = mm;
+            handlerInput.responseBuilder.addDirective(aplDirective);
+        }
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
             .getResponse();
     }
 };
+
 /* *
  * SessionEndedRequest notifies that a session was ended. This handler will be triggered when a currently open 
  * session is closed for one of the following reasons: 1) The user says "exit" or "quit". 2) The user does not 
@@ -215,6 +278,7 @@ const SessionEndedRequestHandler = {
         return handlerInput.responseBuilder.getResponse(); // notice we send an empty response
     }
 };
+
 /* *
  * The intent reflector is used for interaction model testing and debugging.
  * It will simply repeat the intent the user said. You can create custom handlers for your intents 
@@ -227,13 +291,20 @@ const IntentReflectorHandler = {
     handle(handlerInput) {
         const intentName = Alexa.getIntentName(handlerInput.requestEnvelope);
         const speakOutput = `You just triggered ${intentName}`;
-
+        if (Alexa.getSupportedInterfaces(handlerInput.requestEnvelope)['Alexa.Presentation.APL']) {
+            mm.datasources.headlineTemplateData.properties.textContent.headerTitle.text = "";
+            mm.datasources.headlineTemplateData.properties.textContent.headerSubtitle.text = "";
+            mm.datasources.headlineTemplateData.properties.hintText = speakOutput;
+            const aplDirective = mm;
+            handlerInput.responseBuilder.addDirective(aplDirective);
+        }
         return handlerInput.responseBuilder
             .speak(speakOutput)
             //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
             .getResponse();
     }
 };
+
 /**
  * Generic error handling to capture any syntax or routing errors. If you receive an error
  * stating the request handler chain is not found, you have not implemented a handler for
@@ -247,7 +318,13 @@ const ErrorHandler = {
         // const speakOutput = `Sorry, I had trouble doing what you asked. Please try again.`;
         const speakOutput = errorText;
         console.log(`~~~~ Error handled: ${JSON.stringify(error)}`);
-
+        if (Alexa.getSupportedInterfaces(handlerInput.requestEnvelope)['Alexa.Presentation.APL']) {
+            mm.datasources.headlineTemplateData.properties.textContent.headerTitle.text = "";
+            mm.datasources.headlineTemplateData.properties.textContent.headerSubtitle.text = "";
+            mm.datasources.headlineTemplateData.properties.hintText = errorText;
+            const aplDirective = mm;
+            handlerInput.responseBuilder.addDirective(aplDirective);
+        }
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
@@ -270,10 +347,10 @@ exports.handler = Alexa.SkillBuilders.custom()
         CancelAndStopIntentHandler,
         FallbackIntentHandler,
         SessionEndedRequestHandler,
-        IntentReflectorHandler)
+        IntentReflectorHandler, // make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
+    )
     .addErrorHandlers(
         ErrorHandler,
     )
     .lambda();
-    
     

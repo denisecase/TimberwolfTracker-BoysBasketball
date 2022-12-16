@@ -1,0 +1,43 @@
+{
+    "type": "Alexa.Presentation.APL.RenderDocument",
+    "token": "documentToken",
+    "document": {
+        "src": "doc://alexa/apl/documents/Next",
+        "type": "Link"
+    },
+    "datasources": {
+        "headlineTemplateData": {
+            "type": "object",
+            "objectId": "headlineSample",
+            "properties": {
+                "backgroundImage": {
+                    "contentDescription": null,
+                    "smallSourceUrl": null,
+                    "largeSourceUrl": null,
+                    "sources": [
+                        {
+                            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Elegant_Background-1.jpg/640px-Elegant_Background-1.jpg",
+                            "size": "large"
+                        }
+                    ]
+                },
+                "textContent": {
+                    "headerTitle": {
+                        "type": "PlainText",
+                        "text": ""
+                    },
+                    "headerSubtitle": {
+                        "type": "PlainText",
+                        "text": ""
+                    },
+                    "primaryText": {
+                        "type": "PlainText",
+                        "text": "Timberwolf Tracker"
+                    }
+                },
+                "logoUrl": "",
+                "hintText": "Say, \"How many games remaining? Or \"Cancel\" to quit"
+            }
+        }
+    }
+}

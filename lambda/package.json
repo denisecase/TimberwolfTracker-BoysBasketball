@@ -1,7 +1,7 @@
 {
-  "name": "TT-BB",
+  "name": "tt-bb",
   "version": "1.0.0",
-  "description": "Alexa utility for Timberwolf Tracker - Boys Basketball",
+  "description": "Alexa skill for Timberwolf Tracker - Boys Basketball",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
